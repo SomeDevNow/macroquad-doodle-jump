@@ -1,0 +1,57 @@
+name: Build desktop
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows
+            artifact: desktop-windows
+          - os: macos-latest
+            platform: mac
+            artifact: desktop-macos
+          - os: ubuntu-latest
+            platform: linux
+            artifact: desktop-linux
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libx11-dev libxi-dev libgl1-mesa-dev libasound2-dev
+
+      - name: Build desktop release
+        run: cargo build --release
+
+      - name: Export desktop build
+        shell: bash
+        run: |
+          mkdir -p "dist/${{ matrix.platform }}"
+
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            cp target/release/doodle-jump.exe "dist/${{ matrix.platform }}/"
+          else
+            cp target/release/doodle-jump "dist/${{ matrix.platform }}/"
+          fi
+
+      - name: Upload desktop build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: dist/${{ matrix.platform }}/
+          if-no-files-found: error
