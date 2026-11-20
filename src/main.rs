@@ -29,12 +29,16 @@ async fn main() {
     render_target_cam.render_target = Some(render_target.clone());
 
     loop {
+        // do update logic here
+
         let w = WINDOW_WIDTH as f32;
         let h = WINDOW_HEIGHT as f32;
         let scale = f32::min(screen_width() / w, screen_height() / h);
 
         set_camera(&render_target_cam);
         clear_background(LIGHTGRAY);
+
+        // start drawing here
 
         set_default_camera();
         clear_background(BLACK);

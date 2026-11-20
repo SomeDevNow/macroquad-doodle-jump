@@ -2,7 +2,6 @@
 [package]
 name = "doodle-jump"
 version = "0.1.0"
-#authors = "SomeDevNow <mat.hojun.seong@gmail.com>"
 edition = "2024"
 
 [dependencies]
